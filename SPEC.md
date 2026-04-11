@@ -59,3 +59,22 @@ UEL introduces runtime verification:
   "object": "cup",
   "condition": "is_same_object"
 }
+## Chapter 8: Reflection & Adaptive Planning
+
+### 8.1 目标
+UEL 不仅负责确定性执行，还必须支持机器人**在线思考、反思和自适应规划**，实现真正的认知闭环。
+
+### 8.2 新增任务类型
+
+#### 8.2.1 REFLECT（反思任务）
+```json
+{
+  "id": "T006",
+  "task": {
+    "type": "REFLECT",
+    "prompt": "分析当前物体一致性失败的原因，并提出两种备选方案",
+    "input_sources": ["vision", "last_result", "memory"]
+  },
+  "on_success": "T007",
+  "timeout_sec": 8
+}
