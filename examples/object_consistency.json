@@ -1,0 +1,88 @@
+{
+  "protocol": "UEL-1.0",
+  "mission_id": "MISSION-OBJECT-CONSISTENCY-001",
+  "agent_id": "ur5e_sim_01",
+  "capabilities": {
+    "mobility": ["arm_6dof"],
+    "end_effector": ["gripper_2f85"],
+    "sensors": ["vision", "force_torque"],
+    "max_payload_kg": 5.0,
+    "workspace_zones": ["table_A", "table_B", "safe_zone"],
+    "supported_tasks": ["MOVE", "GRASP", "VERIFY", "CONDITION"]
+  },
+  "execution": {
+    "mode": "SEQUENTIAL",
+    "retry": 2,
+    "timeout_sec": 30
+  },
+  "tasks": [
+    {
+      "id": "T001",
+      "task": {
+        "type": "MOVE",
+        "target": {"x": 0.3, "y": 0.2, "z": 0.15}
+      },
+      "constraints": {
+        "collision_avoidance": true,
+        "workspace": "table_A"
+      }
+    },
+    {
+      "id": "T002",
+      "task": {
+        "type": "VERIFY",
+        "object": "cup",
+        "condition": "is_same_object",
+        "timeout": 2.0
+      },
+      "on_success": "T003",
+      "on_fail": {
+        "action": "REPLAN",
+        "strategy": "SEARCH_OBJECT",
+        "fallback_id": "T001"
+      }
+    },
+    {
+      "id": "T003",
+      "task": {
+        "type": "GRASP",
+        "width": 0.05,
+        "force": 25.0
+      },
+      "constraints": {
+        "collision_avoidance": true
+      }
+    },
+    {
+      "id": "T004",
+      "task": {
+        "type": "MOVE",
+        "target": {"x": 0.5, "y": -0.1, "z": 0.2}
+      },
+      "constraints": {
+        "collision_avoidance": true,
+        "workspace": "table_B"
+      }
+    },
+    {
+      "id": "T005",
+      "task": {
+        "type": "VERIFY",
+        "object": "cup",
+        "condition": "is_in_gripper",
+        "timeout": 1.0
+      },
+      "on_fail": {
+        "action": "REPLAN",
+        "strategy": "RETURN_HOME",
+        "fallback_id": "T001"
+      }
+    }
+  ],
+  "result": {
+    "status": "PENDING",
+    "error_code": null,
+    "latency_ms": null,
+    "replan_hint": {}
+  }
+}
