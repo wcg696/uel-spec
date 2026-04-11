@@ -39,3 +39,23 @@ It acts as the “USB interface” for robots: any LLM can generate UEL programs
     "replan_hint": { ... }
   }
 }
+---
+
+## Chapter 7: Dynamic Verification & Object Consistency
+
+In real-world environments, objects may change state or identity during execution.
+
+### Problem Example
+A robot grasps a cup, but the object is replaced with a banana mid-execution.
+
+### Solution
+
+UEL introduces runtime verification:
+
+#### VERIFY Task
+```json
+{
+  "type": "VERIFY",
+  "object": "cup",
+  "condition": "is_same_object"
+}
